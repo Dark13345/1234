@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Торговые идеи: AMarkets и NPB</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  color-scheme: only light;
+  --green: #009B7A; --green-soft: rgba(0, 155, 122, .12); --hero: #D7ECEA; --card: #F5F7F9; --line: #D3DAE2;
+  --text: #0A0D10; --text2: #4A5560; --text3: #8894A0; --red: #D92D46; --red-soft: rgba(217, 45, 70, .08);
+  --amber: #B7791F; --amber-soft: rgba(214, 158, 46, .14); --gray-soft: #EEF1F4;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #fff; color: var(--text); font: 400 17px/1.55 Roboto, "Segoe UI", Arial, sans-serif; overflow-x: hidden; }
+a { color: var(--green); }
+.wrap { max-width: 1104px; margin: 0 auto; padding: 0 28px; }
+h1, h2 { font-family: Montserrat, Roboto, sans-serif; font-weight: 800; color: #000; text-wrap: balance; }
+h1 { font-size: 40px; line-height: 50px; }
+h2 { font-size: 30px; line-height: 38px; }
+h3 { font-size: 20px; line-height: 26px; font-weight: 700; }
+
+.hero { background: var(--hero); border-radius: 40px; padding: 48px; margin: 28px 0 40px; display: flex; flex-direction: column; gap: 16px; }
+.hero p { font-size: 18px; line-height: 26px; color: var(--text2); max-width: 760px; }
+.links { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 4px; }
+.links a { background: #fff; border-radius: 14px; padding: 12px 18px; text-decoration: none; font-weight: 500; font-size: 15px; }
+.links a span { display: block; color: var(--text3); font-size: 13px; font-weight: 400; }
+
+section { margin-bottom: 48px; display: flex; flex-direction: column; gap: 20px; }
+.lead { font-size: 18px; line-height: 26px; color: var(--text2); max-width: 820px; }
+
+.legend { display: flex; gap: 8px 16px; flex-wrap: wrap; font-size: 14px; color: var(--text2); align-items: center; }
+.tag { display: inline-block; white-space: nowrap; border-radius: 30px; padding: 2px 10px; font-size: 12px; font-weight: 700; line-height: 1.5; }
+.t-ok { background: var(--green-soft); color: var(--green); }
+.t-code { background: #E6EEF8; color: #2F5D9A; }
+.t-guess { background: var(--amber-soft); color: var(--amber); }
+.t-doc { background: #EDE7F8; color: #5B3FA0; }
+.t-no { background: var(--gray-soft); color: var(--text3); }
+
+.table { overflow-x: auto; border-radius: 24px; background: var(--card); }
+table { width: 100%; border-collapse: collapse; min-width: 760px; }
+th, td { text-align: left; vertical-align: top; padding: 16px 20px; border-bottom: 1px solid var(--line); font-size: 15px; line-height: 22px; }
+th { font-size: 13px; text-transform: uppercase; color: var(--text3); font-weight: 700; letter-spacing: .02em; }
+tr:last-child td { border-bottom: 0; }
+td:first-child { font-weight: 700; width: 18%; }
+td .tag { margin-top: 6px; }
+.cmp td:nth-child(2), .cmp td:nth-child(3) { width: 41%; }
+.steps td:first-child { width: 6%; color: var(--green); font-size: 18px; }
+.steps td:nth-child(2) { font-weight: 400; width: 30%; }
+.steps td:nth-child(3) { width: 48%; }
+.steps td:nth-child(4) { width: 16%; }
+
+.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.card { background: var(--card); border-radius: 32px; padding: 32px 32px 45px; display: flex; flex-direction: column; gap: 14px; }
+.card p, .card li { font-size: 16px; line-height: 23px; color: var(--text2); }
+.card ul { padding-left: 18px; display: flex; flex-direction: column; gap: 6px; }
+.quote { background: #fff; border-left: 3px solid var(--red); border-radius: 0 12px 12px 0; padding: 10px 14px; font-size: 15px; line-height: 21px; color: var(--text); }
+.fix { border-left-color: var(--green); }
+
+.result { background: var(--green-soft); border-radius: 20px; padding: 20px 24px; font-size: 17px; line-height: 25px; }
+.result b { color: var(--green); }
+
+.rules td:first-child { width: 16%; }
+.rules td:nth-child(2), .rules td:nth-child(3) { width: 42%; }
+
+.price td:first-child { width: 22%; }
+.price td:nth-child(2) { width: 16%; white-space: nowrap; }
+.price td:nth-child(3) { width: 14%; white-space: nowrap; font-weight: 700; }
+.price td:nth-child(5) { width: 12%; }
+.now { font-style: normal; font-size: 12px; font-weight: 700; color: var(--green); background: var(--green-soft); border-radius: 30px; padding: 2px 8px; margin-left: 4px; }
+.note-small { font-size: 13px; line-height: 19px; color: var(--text3); }
+footer { color: var(--text3); font-size: 13px; padding: 24px 0 48px; border-top: 1px solid var(--line); }
+
+@media (max-width: 860px) {
+  .wrap { padding: 0 18px; }
+  .hero { border-radius: 28px; padding: 28px 20px; margin-top: 18px; }
+  h1 { font-size: 30px; line-height: 38px; }
+  h2 { font-size: 24px; line-height: 31px; }
+  .hero p, .lead { font-size: 17px; line-height: 24px; }
+  .cards { grid-template-columns: 1fr; gap: 10px; }
+  .card { padding: 20px 20px 28px; border-radius: 24px; }
+  .table { border-radius: 18px; }
+  th, td { padding: 12px 14px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>AI Торговые идеи: как это работает у AMarkets и у нас</h1>
+  <p>Разбор сервиса AMarkets, который мы взяли за образец, и нашей версии для NPB Markets. Состояние на 18 октября 2026 года.</p>
+  <div class="links">
+    <a href="https://1.amarkets.city/services/ai-trade-ideas" target="_blank" rel="noopener">AMarkets<span>в личном кабинете, нужен вход</span></a>
+    <a href="https://dark13345.github.io/ai-ideas/" target="_blank" rel="noopener">Наша версия<span>открыта всем, демо</span></a>
+  </div>
+</header>
+
+<section>
+  <div class="legend">Откуда мы знаем каждый факт:
+    <span class="tag t-ok">проверено</span> сняли живые ответы сервера, проверили в браузере
+    <span class="tag t-code">из кода</span> прочитали в коде страницы AMarkets
+    <span class="tag t-guess">вывод</span> наше заключение по косвенным признакам
+    <span class="tag t-no">не изучено</span> снаружи не узнать
+    <span class="tag t-doc">документация</span> официальные данные поставщика
+    <span class="tag t-guess">обзоры</span> сторонние сайты, нужно сверить
+  </div>
+</section>
+
+<section>
+  <h2>Коротко: чем отличаемся</h2>
+  <div class="table"><table class="cmp">
+    <tr><th>Что</th><th>AMarkets</th><th>NPB (наша версия)</th></tr>
+    <tr><td>Где живёт</td><td>Раздел личного кабинета, только для клиентов<br><span class="tag t-ok">проверено</span></td><td>Открытая страница, видна всем. Сейчас на GitHub, это демо<br><span class="tag t-ok">проверено</span></td></tr>
+    <tr><td>Инструменты</td><td>26: валюты, золото, серебро, нефть, индексы, биткоин<br><span class="tag t-ok">проверено</span></td><td>20 популярных по разделам NPB: 9 валютных пар (EURUSD, GBPUSD, USDJPY, AUDUSD, USDCAD, USDCHF, NZDUSD, EURJPY, GBPJPY), золото и серебро, нефть WTI и Brent, природный газ, индексы S&amp;P 500, Dow Jones 30, NASDAQ 100, DAX 40, биткоин и эфириум<br><span class="tag t-ok">проверено</span></td></tr>
+    <tr><td>Периоды</td><td>Краткосрочный (30 минут), среднесрочный (4 часа), долгосрочный (день)<br><span class="tag t-code">из кода</span></td><td>Те же три<br><span class="tag t-ok">проверено</span></td></tr>
+    <tr><td>Цены</td><td>Свои, брокерские<br><span class="tag t-guess">вывод</span></td><td>Yahoo Finance. Металлы, нефть и газ — по фьючерсам, они немного отличаются от цены брокера (золото примерно на $17)<br><span class="tag t-ok">проверено</span></td></tr>
+    <tr><td>Как часто обновляется</td><td>Идея готовится заранее и раздаётся всем. Возраст ответа: от 10 минут до 13 часов<br><span class="tag t-ok">проверено</span></td><td>Пересчёт раз в 2 часа по будням, раз в 6 часов по выходным. Чаще не позволяют бесплатные лимиты: прогон по 20 инструментам с ИИ занимает около 5 минут<br><span class="tag t-ok">проверено</span></td></tr>
+    <tr><td>Индикаторы</td><td>RSI, MACD, Parabolic SAR, ADX, CCI, Стохастик<br><span class="tag t-ok">проверено</span></td><td>Те же шесть<br><span class="tag t-ok">проверено</span></td></tr>
+    <tr><td>Итог</td><td>Только «Покупать» или «Продавать», даже когда индикаторы делятся почти поровну<br><span class="tag t-guess">вывод</span></td><td>Как у AMarkets: всегда «Покупать» или «Продавать», по большинству голосов. При равенстве направление задаёт Parabolic SAR. Если перевес 1 голос или меньше, в тексте пишем, что сигнал слабый, и ставим низкую уверенность<br><span class="tag t-ok">проверено</span></td></tr>
+    <tr><td>Кто пишет текст</td><td>Строки индикаторов — шаблоны. Рекомендацию и новости пишет языковая модель<br><span class="tag t-guess">вывод</span></td><td>Строки индикаторов — шаблоны. Рекомендацию и новости пишет бесплатная модель GPT-OSS 120B через Groq<br><span class="tag t-ok">проверено</span></td></tr>
+    <tr><td>Проверка текста</td><td>Не видна: в текстах встречаются числа и выводы, которые не сходятся с расчётом<br><span class="tag t-ok">проверено</span></td><td>Программа сверяет каждое число и направление сделки. Если не сходится — текст заменяется шаблоном<br><span class="tag t-ok">проверено</span></td></tr>
+    <tr><td>Новости</td><td>Блок «Анализ рыночных новостей и событий». Источник неизвестен<br><span class="tag t-no">не изучено</span></td><td>Тот же блок, по заголовкам Yahoo Finance за 3 дня<br><span class="tag t-ok">проверено</span></td></tr>
+    <tr><td>Лимит</td><td>4 попытки в сутки, считает сервер. После пополнения лимит снимается<br><span class="tag t-ok">проверено</span> <span class="tag t-guess">вывод</span></td><td>5 попыток в сутки, считает браузер. Для демо, обходится очисткой браузера<br><span class="tag t-ok">проверено</span></td></tr>
+    <tr><td>Целевое действие</td><td>«Пополнить» (на депозит) или «Торговать» (в веб-терминал MT5)<br><span class="tag t-code">из кода</span></td><td>«Открыть счёт» — регистрация nm-go.com с метками рекламы и utm_2=ai_ideas<br><span class="tag t-ok">проверено</span></td></tr>
+    <tr><td>Стоимость</td><td>Неизвестна<br><span class="tag t-no">не изучено</span></td><td>0 ₽: GitHub, Yahoo и Groq бесплатны в наших объёмах. Платные модели — от $2 в месяц, см. раздел «Модели ИИ и цены»<br><span class="tag t-ok">проверено</span></td></tr>
+  </table></div>
+  <p class="result"><b>Вывод:</b> по виду и логике наша версия повторяет AMarkets, включая итог «Покупать / Продавать», но надёжнее в тексте и честно помечает слабый сигнал. Слабые места демо: цены не брокерские, обновление раз в 2 часа, лимит попыток условный.</p>
+</section>
+
+<section>
+  <h2>Как работает у AMarkets</h2>
+  <p class="lead">Сама страница почти ничего не считает. Она делает два запроса к серверу AMarkets и рисует готовый ответ. Как сервер считает индикаторы и что отправляет в модель, снаружи не видно.</p>
+  <div class="table"><table class="steps">
+    <tr><th>№</th><th>Клиент видит</th><th>Технически</th><th>Откуда знаем</th></tr>
+    <tr><td>1</td><td>Открывает «Сервисы → AI Торговые идеи». Видит форму и 4 карточки преимуществ</td><td>Запрос <code>/v1/office/ai_analytics/conditions</code>: остаток попыток, список из 26 инструментов, три периода</td><td><span class="tag t-ok">проверено</span></td></tr>
+    <tr><td>2</td><td>Выбирает инструмент и период, нажимает «Сгенерировать»</td><td>Если попыток 0, вместо запроса открывается окно «Пополнить / Закрыть»</td><td><span class="tag t-code">из кода</span></td></tr>
+    <tr><td>3</td><td>Видит заставку со звёздочками и фразами вроде «Подключаемся к матрице финансовых рынков…»</td><td>Страница специально ждёт 5 секунд, хотя ответ готов сразу. Заставка создаёт ощущение работы нейросети</td><td><span class="tag t-code">из кода</span></td></tr>
+    <tr><td>4</td><td>Получает идею: цену, график, рекомендацию, список индикаторов, новости</td><td>Запрос <code>/v1/office/ai_analytics?pair=…&amp;timeframe=…</code>. Идея создана заранее, одна на пару «инструмент + период», и одинакова для всех клиентов. Попытка списывается всё равно</td><td><span class="tag t-ok">проверено</span></td></tr>
+    <tr><td>5</td><td>Видит строки индикаторов с метками «Покупать» и «Продавать»</td><td>Строки собраны из шаблонов: у каждой есть ключ вроде <code>rsi_bearish_momentum</code>, текст при одном ключе дословно совпадает. Метка ставится по простому порогу: RSI выше 50, CCI выше 0, Стохастик выше 50 — «Покупать»</td><td><span class="tag t-ok">проверено</span> <span class="tag t-guess">вывод</span></td></tr>
+    <tr><td>6</td><td>Видит итог и текст рекомендации</td><td>Итог совпадает с большинством меток. Текст рекомендации и новостей пишет языковая модель. Есть скрытое поле «уверенность» (65–68%), на странице его не показывают</td><td><span class="tag t-guess">вывод</span> <span class="tag t-ok">проверено</span></td></tr>
+    <tr><td>7</td><td>Видит график</td><td>Всегда 100 свечей, рисуется только цена закрытия. Справа 5 пустых делений с датой следующего дня, отсюда «17.10» на графике, снятом 16.10</td><td><span class="tag t-ok">проверено</span> <span class="tag t-code">из кода</span></td></tr>
+    <tr><td>8</td><td>Нажимает «Пополнить» или «Торговать»</td><td>Пока есть лимит попыток — «Пополнить» на депозит. Без лимита (видимо, после пополнения) — «Торговать» в веб-терминал MT5. Каждый шаг уходит в Google Analytics</td><td><span class="tag t-code">из кода</span> <span class="tag t-guess">вывод</span></td></tr>
+  </table></div>
+  <p class="result"><b>Вывод:</b> «AI» у AMarkets — это обычный расчёт индикаторов плюс текст от модели, а впечатление нейросети создают заставка и пауза. Главная задача сервиса — довести клиента до пополнения.</p>
+</section>
+
+<section>
+  <h2>Ошибки AMarkets, которых у нас нет</h2>
+  <div class="cards">
+    <div class="card">
+      <h3>Текст спорит с ценой</h3>
+      <p class="quote">«Цена удерживается выше уровня поддержки 4177» — при цене на экране 4 173,45</p>
+      <p class="quote fix">У нас каждое число в тексте сверяется с расчётом. Чужое число — текст заменяется шаблоном</p>
+    </div>
+    <div class="card">
+      <h3>Метка спорит с описанием</h3>
+      <p class="quote">Стохастик: «в нейтральной зоне, нет чёткого сигнала» — и метка «Покупать»</p>
+      <p class="quote fix">У нас нейтральная зона даёт метку «Нейтрально», а не покупку или продажу</p>
+    </div>
+    <div class="card">
+      <h3>Итог без объяснения</h3>
+      <p class="quote">MACD и Parabolic SAR за продажу, итог «Покупать», о противоречии ни слова</p>
+      <p class="quote fix">У нас в тексте прямо сказано, какие индикаторы против, а при минимальном перевесе — что сигнал слабый</p>
+    </div>
+  </div>
+  <p class="result"><b>Вывод:</b> у AMarkets модели доверено слишком много, и это видно клиенту. У нас модель пишет только слова вокруг готовых чисел, а программа проверяет результат.</p>
+</section>
+
+<section>
+  <h2>Как работает у нас</h2>
+  <p class="lead">Все части бесплатные. Код расчёта лежит в закрытом репозитории, наружу выкладываются только страница и готовые идеи.</p>
+  <div class="table"><table class="steps">
+    <tr><th>№</th><th>Клиент видит</th><th>Технически</th><th>Откуда знаем</th></tr>
+    <tr><td>1</td><td>Ничего: идеи готовятся заранее, как у AMarkets</td><td>GitHub Actions раз в 2 часа по будням (раз в 6 часов по выходным) запускает программу. Она берёт с Yahoo Finance по 100+ свечей на каждый из 20 инструментов и 3 периода</td><td><span class="tag t-ok">проверено</span></td></tr>
+    <tr><td>2</td><td>—</td><td>Программа считает 6 индикаторов и ставит каждому метку по правилам ниже. Итог — по большинству голосов, при равенстве — по Parabolic SAR. Уверенность — по перевесу голосов</td><td><span class="tag t-ok">проверено</span></td></tr>
+    <tr><td>3</td><td>—</td><td>Уровни поддержки и сопротивления — по ближайшим вершинам и впадинам графика. Стоп — за ближайшим уровнем, цель — не ближе, чем стоп</td><td><span class="tag t-ok">проверено</span></td></tr>
+    <tr><td>4</td><td>—</td><td>Модель GPT-OSS 120B (через Groq) получает готовые числа и заголовки новостей и пишет рекомендацию и блок новостей. Один запрос на инструмент, около 1&nbsp;900 токенов</td><td><span class="tag t-ok">проверено</span></td></tr>
+    <tr><td>5</td><td>—</td><td>Программа проверяет текст модели: числа только из расчёта, есть цель и стоп, сценарий отменяется на стопе и в правильную сторону, новости по-русски. Не прошёл проверку — остаётся шаблонный текст</td><td><span class="tag t-ok">проверено</span></td></tr>
+    <tr><td>6</td><td>Открывает страницу, выбирает инструмент и период, нажимает «Сгенерировать»</td><td>Страница берёт готовую идею из файла. Заставка длится 4 секунды, фразы в ней описывают реальные шаги расчёта</td><td><span class="tag t-ok">проверено</span></td></tr>
+    <tr><td>7</td><td>Видит цену, график, рекомендацию с плашками «Вход / Цель / Стоп», индикаторы, новости, подпись «текст написал ИИ, числа проверены расчётом»</td><td>Если рынок закрыт, у цены пометка «Рынок закрыт, цена на…»</td><td><span class="tag t-ok">проверено</span></td></tr>
+    <tr><td>8</td><td>Нажимает «Открыть счёт»</td><td>Переход на nm-go.com/lprureg в новой вкладке. Метки рекламы (utm_*) передаются дальше, добавляется utm_2=ai_ideas</td><td><span class="tag t-ok">проверено</span></td></tr>
+  </table></div>
+  <p class="result"><b>Вывод:</b> схема та же, что у AMarkets, но каждая цифра на странице посчитана программой и проверена, а модель отвечает только за формулировки.</p>
+</section>
+
+<section>
+  <h2>Правила меток: AMarkets и мы</h2>
+  <div class="table"><table class="rules">
+    <tr><th>Индикатор</th><th>AMarkets <span class="tag t-guess">вывод</span></th><th>NPB <span class="tag t-ok">проверено</span></th></tr>
+    <tr><td>RSI</td><td>Выше 50 — покупать, ниже — продавать</td><td>55 и выше — покупать, 45 и ниже — продавать, между ними нейтрально. Выше 70 и ниже 30 — нейтрально (перекупленность и перепроданность)</td></tr>
+    <tr><td>MACD</td><td>Гистограмма растёт — покупать, даже глубоко ниже нуля</td><td>Выше нуля и растёт — покупать, ниже нуля и падает — продавать, в остальных случаях нейтрально</td></tr>
+    <tr><td>Parabolic SAR</td><td>Ниже цены — покупать, выше — продавать</td><td>Так же</td></tr>
+    <tr><td>ADX</td><td>По направлению тренда</td><td>Ниже 20 — тренда нет, нейтрально. Выше — по направлению тренда (+DI против −DI)</td></tr>
+    <tr><td>CCI</td><td>Выше 0 — покупать</td><td>Выше +50 — покупать, ниже −50 — продавать, между ними нейтрально</td></tr>
+    <tr><td>Стохастик</td><td>Выше 50 — покупать, даже в «нейтральной зоне»</td><td>Между 20 и 80 — нейтрально. Сигнал только при развороте из зон перепроданности или перекупленности</td></tr>
+  </table></div>
+  <p class="result"><b>Вывод:</b> наши правила для отдельных индикаторов строже, поэтому у них чаще стоит «Нейтрально», зато метки не спорят с описанием. Итог при этом всегда «Покупать» или «Продавать», как у AMarkets.</p>
+</section>
+
+<section>
+  <h2>Чего у нас пока нет</h2>
+  <div class="cards">
+    <div class="card"><h3>Цены брокера</h3><p>Сейчас Yahoo Finance. Цены NPB можно брать из терминала MT4, но для этого сервис нужно перенести на свой сервер</p></div>
+    <div class="card"><h3>Настоящий лимит попыток</h3><p>Попытки считает браузер посетителя. Для честного лимита нужен сервер и вход по аккаунту</p></div>
+    <div class="card"><h3>Статистика переходов</h3><p>Не подключён счётчик, поэтому не видно, сколько людей сгенерировали идею и нажали «Открыть счёт»</p></div>
+  </div>
+  <p class="result"><b>Вывод:</b> для показа и проверки идеи демо достаточно. Для запуска на клиентов нужны цены NPB, свой сервер и счётчик.</p>
+</section>
+
+<section id="models">
+  <h2>Модели ИИ и цены</h2>
+  <p class="lead">Сейчас тексты пишет бесплатная модель. Она справляется, но иногда пишет коряво, а её лимит 8&nbsp;000 токенов в минуту не даёт обновлять 20 инструментов чаще раза в 2 часа. Платная модель снимает оба ограничения.</p>
+  <p class="lead"><b>Как считали:</b> 20 инструментов, обновление раз в 2 часа по будням — около 5&nbsp;000 запросов к модели в месяц. Один запрос — примерно 1&nbsp;500 токенов на вход и 600 на выход. Итого около 7,5&nbsp;млн входных и 3&nbsp;млн выходных токенов в месяц. Это верхняя оценка: если итог и уровни не поменялись, старый текст используется повторно и запроса нет.</p>
+  <div class="table"><table class="price">
+    <tr><th>Модель</th><th>Цена за 1 млн токенов<br>вход / выход</th><th>В месяц, примерно</th><th>Качество текста по-русски</th><th>Откуда цена</th></tr>
+    <tr><td>GPT-OSS 120B через Groq <i class="now">сейчас</i></td><td>бесплатно</td><td>$0</td><td>Приемлемо, иногда коряво. Лимит скорости, обновление не чаще раза в 2 часа</td><td><span class="tag t-ok">проверено</span></td></tr>
+    <tr><td>Claude Haiku 5.5 (Anthropic)</td><td>$0,10 / $0,50</td><td>около $2–3</td><td>Хорошо. Быстрая и самая дешёвая из платных</td><td><span class="tag t-doc">документация</span></td></tr>
+    <tr><td>GPT-5.4 nano (OpenAI)</td><td>$0,20 / $1,25</td><td>около $5</td><td>Хорошо для коротких текстов</td><td><span class="tag t-guess">обзоры</span></td></tr>
+    <tr><td>DeepSeek V4.1 Flash</td><td>$0,30 / $1,20</td><td>около $6</td><td>Хорошо. В часы пик по будням дороже</td><td><span class="tag t-guess">обзоры</span></td></tr>
+    <tr><td>Gemini Flash (Google)</td><td>$0,75 / $3,75</td><td>около $17</td><td>Хорошо</td><td><span class="tag t-guess">обзоры</span></td></tr>
+    <tr><td>GPT-5.4 mini (OpenAI)</td><td>$0,75 / $4,50</td><td>около $19</td><td>Очень хорошо</td><td><span class="tag t-guess">обзоры</span></td></tr>
+    <tr><td>Claude Sonnet 5.5 (Anthropic)</td><td>$2 / $10</td><td>около $45–70</td><td>Отлично. Аккуратный стиль, точно следует правилам</td><td><span class="tag t-doc">документация</span></td></tr>
+    <tr><td>Claude Opus 5.5 (Anthropic)</td><td>$4 / $20</td><td>около $90–150</td><td>Отлично, но для коротких идей избыточна</td><td><span class="tag t-doc">документация</span></td></tr>
+  </table></div>
+  <div class="cards">
+    <div class="card"><h3>Оплата</h3><p>Anthropic, OpenAI и Google принимают зарубежные карты (Visa, Mastercard), российские не принимают. Счёт пополняется заранее, списание по факту запросов. По нашим данным, Россия не входит в список поддерживаемых стран этих сервисов, поэтому аккаунт лучше оформлять на компанию или сотрудника за рубежом</p></div>
+    <div class="card"><h3>Что изменится в сервисе</h3><p>Пропадёт лимит в минуту: прогон займёт около минуты вместо пяти. Можно вернуть обновление раз в час и добавить остальные инструменты AMarkets до 26. Переключение — около часа работы, остальной сервис не меняется</p></div>
+    <div class="card"><h3>Защита от ошибок</h3><p>Проверка чисел и направления сделки остаётся для любой модели. Если текст не прошёл проверку, на странице будет шаблонный текст, а не ошибка ИИ</p></div>
+  </div>
+  <p class="result"><b>Вывод:</b> для старта хватит Claude Haiku 5.5 — около $2–3 в месяц при заметно лучшем тексте, чем у бесплатной модели. Если важен максимально аккуратный стиль, Claude Sonnet 5.5 — около $45–70 в месяц. Перед подключением прогоним обе на 20 инструментах и сравним тексты.</p>
+  <p class="note-small">Цены Claude — по справочнику Anthropic на 06.10.2026. Цены OpenAI, Google и DeepSeek — по сторонним обзорам за октябрь 2026 (<a href="https://benchlm.ai/llm-pricing" target="_blank" rel="noopener">benchlm.ai</a>, <a href="https://tokenhot.ai/blog/llm-api-pricing-comparison-2026" target="_blank" rel="noopener">tokenhot.ai</a>), перед оплатой сверить на сайте поставщика. Курс и налоги не учтены.</p>
+</section>
+
+<section>
+  <h2>Что нужно решить</h2>
+  <div class="table"><table class="cmp">
+    <tr><th>Вопрос</th><th>Варианты</th><th>Что изменится</th></tr>
+    <tr><td>Где будет жить сервис</td><td>Рабочий сервер с лендингами, отдельный сервер или облачный Render</td><td>Появятся цены NPB и настоящий лимит попыток</td></tr>
+    <tr><td>Для кого сервис</td><td>Открытая страница для привлечения или раздел личного кабинета, как у AMarkets</td><td>От этого зависит кнопка: «Открыть счёт» или «Пополнить»</td></tr>
+    <tr><td>Сколько инструментов</td><td>Сейчас 20, у AMarkets 26</td><td>На бесплатной модели 20 — предел при обновлении раз в 2 часа. Больше инструментов или чаще обновление — только на платной модели</td></tr>
+    <tr><td>Какая модель пишет текст</td><td>Бесплатная GPT-OSS 120B или платная, см. раздел «Модели ИИ и цены»</td><td>Платная пишет ровнее и быстрее, снимает ограничения на частоту обновления</td></tr>
+  </table></div>
+</section>
+
+<footer>Подготовлено 17.10.2026, обновлено 18.10.2026. Данные AMarkets — по коду их страницы и ответам сервера, снятым из личного кабинета 16–17.10.2026.</footer>
+</div>
+</body>
+</html>
